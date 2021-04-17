@@ -1,6 +1,11 @@
 import pygame as pg
 import chess_engine
 
+
+# initiate classes
+# move = chess_engine.Move()
+gs = chess_engine.GameState()
+
 # General game variables
 WIDTH = 512
 HEIGHT = 512
@@ -23,22 +28,44 @@ def main():
     screen = pg.display.set_mode((WIDTH, HEIGHT))
     clock = pg.time.Clock()
     screen.fill(pg.Color('white'))
-    gs = chess_engine.GameState()
     load_images()
     running = True
+    sq_selected = ()
+    player_clicks = []
 
     while running:
         for e in pg.event.get():
             if e.type == pg.QUIT:
                 running = False
 
-        draw_game_state(screen, gs)
+            elif e.type == pg.MOUSEBUTTONDOWN:
+                location = pg.mouse.get_pos()
+                col = location[0]//SQ_SIZE
+                row = location[1]//SQ_SIZE
+
+                if sq_selected == (row, col):
+                    sq_selected = ()
+                    player_clicks = []
+                else:
+                    sq_selected = (row, col)
+                    player_clicks.append(sq_selected)
+                if len(player_clicks) == 2:
+                    gs.move(player_clicks)
+                    for i in gs.board:
+                        print(i)
+                    pg.display.flip()
+                    player_clicks = []
+                    sq_selected =()
+
+                    print(player_clicks)
+
+        draw_game_state(screen)
         clock.tick(MAX_FPS)
         pg.display.flip()
 
 
 # Drawing game state
-def draw_game_state(screen, gs):
+def draw_game_state(screen):
     draw_board(screen)
     draw_pieces(screen, gs.board)
 
