@@ -42,20 +42,36 @@ def main():
                 location = pg.mouse.get_pos()
                 col = location[0]//SQ_SIZE
                 row = location[1]//SQ_SIZE
+                piece = gs.board[row][col]
+                print(gs.white_to_move)
+                print(piece)
 
                 if sq_selected == (row, col):
                     sq_selected = ()
                     player_clicks = []
+
+                elif len(player_clicks) == 0 and piece == '..':
+                    sq_selected = ()
+
                 else:
-                    sq_selected = (row, col)
-                    player_clicks.append(sq_selected)
-                if len(player_clicks) == 2:
-                    gs.move(player_clicks)
-                    for i in gs.board:
-                        print(i)
-                    pg.display.flip()
-                    player_clicks = []
-                    sq_selected =()
+                    if len(player_clicks) == 0 and gs.white_to_move and piece[0] == 'w' or len(player_clicks) == 0 and not gs.white_to_move and piece[0] == 'b':
+                        sq_selected = (row, col)
+                        player_clicks.append(sq_selected)
+                        print(sq_selected)
+                        print(player_clicks)
+                    elif len(player_clicks) == 1:
+                        sq_selected = (row, col)
+                        player_clicks.append(sq_selected)
+
+                    if len(player_clicks) == 2:
+                        gs.move(player_clicks)
+                        for i in gs.board:
+                            print(i)
+                        pg.display.flip()
+                        player_clicks = []
+                        sq_selected = ()
+
+
 
                     print(player_clicks)
 

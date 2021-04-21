@@ -32,7 +32,10 @@ class GameState():
         self.move_log.append({'piece': move_from_piece, 'from': f'row: {move_from_row}, col: {move_from_col}',
                               'to': f'row: {move_to_row}, col: {move_to_col}'})
 
-        # for i in self.board:
-        #     print(i)
+        if self.white_to_move:
+            self.white_to_move = False
+
+        else:
+            self.white_to_move = True
 
         print(self.move_log[-1])
