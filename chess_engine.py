@@ -39,3 +39,44 @@ class GameState():
             self.white_to_move = True
 
         print(self.move_log[-1])
+
+
+class MoveRules(GameState):
+    def __init__(self):
+        super().__init__()
+
+    def white_to_move_rule(self, row, col):
+        if self.white_to_move and self.board[row][col][0] == 'w':
+            return True
+
+        elif not self.white_to_move and self.board[row][col] == 'b':
+            return True
+
+        else:
+            return False
+
+    def pond_rules(self, row, col, player_clicks):
+        # White pond rules
+        if self.board[row][col][0] == 'w':
+            legal_positions = [
+                player_clicks[0],
+                (player_clicks[0][0] - 1, player_clicks[0][1])
+            ]
+            print(f'lp = {legal_positions}')
+            print(f'pc = {player_clicks}')
+
+        if self.board[row][col][0] == 'b':
+            legal_positions = [
+                player_clicks[0],
+                (player_clicks[0][0] + 1, player_clicks[0][1])
+            ]
+            print(f'lp = {legal_positions}')
+
+        else:
+            legal_positions = None
+
+        if player_clicks == legal_positions:
+            return True
+
+        else:
+            return False
