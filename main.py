@@ -42,37 +42,37 @@ def main():
                 location = pg.mouse.get_pos()
                 col = location[0]//SQ_SIZE
                 row = location[1]//SQ_SIZE
-                piece = gs.board[row][col]
+                current_piece = gs.board[row][col]
 
                 if sq_selected == (row, col):
                     sq_selected = ()
                     player_clicks = []
 
-                elif len(player_clicks) == 0 and piece == '..':
+                elif len(player_clicks) == 0 and current_piece == '..':
                     sq_selected = ()
 
                 else:
-                    if (len(player_clicks) == 0 and gs.white_to_move and piece[0] == 'w') or\
-                            (len(player_clicks) == 0 and not gs.white_to_move and piece[0] == 'b'):
+                    if (len(player_clicks) == 0 and gs.white_to_move and current_piece[0] == 'w') or\
+                            (len(player_clicks) == 0 and not gs.white_to_move and current_piece[0] == 'b'):
                         sq_selected = (row, col)
+                        print(f'1sq = {sq_selected}')
                         player_clicks.append(sq_selected)
 
                     elif len(player_clicks) == 1:
+                        first_picked_piece = gs.board[player_clicks[0][0]][player_clicks[0][1]]
                         sq_selected = (row, col)
+                        print(f'2sq = {sq_selected}')
                         player_clicks.append(sq_selected)
 
-                    if len(player_clicks) == 2:
-                        if piece[1] == 'P':
-                            print(player_clicks)
-                            print(mr.pond_rules(row,col, player_clicks))
-                            if mr.pond_rules(row, col, player_clicks):
+                        if first_picked_piece[1] == 'P':
+
+                            if mr.pond_rules(player_clicks):
                                 gs.move(player_clicks)
-                                for i in gs.board:
-                                    print(i)
                                 player_clicks = []
                                 sq_selected = ()
                             else:
-                                pass
+                                player_clicks = []
+                                sq_selected = ()
 
         draw_game_state(screen)
         clock.tick(MAX_FPS)
