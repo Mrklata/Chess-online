@@ -5,7 +5,6 @@ import chess_engine
 # initiate classes
 # move = chess_engine.Move()
 gs = chess_engine.GameState()
-mr = chess_engine.MoveRules()
 # General game variables
 WIDTH = 512
 HEIGHT = 512
@@ -63,10 +62,11 @@ def main():
                         sq_selected = (row, col)
                         print(f'2sq = {sq_selected}')
                         player_clicks.append(sq_selected)
-
+                        print(player_clicks)
                         if first_picked_piece[1] == 'P':
-
-                            if mr.pond_rules(player_clicks):
+                            for i in gs.board:
+                                print(i)
+                            if gs.pond_rules(player_clicks):
                                 gs.move(player_clicks)
                                 player_clicks = []
                                 sq_selected = ()

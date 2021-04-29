@@ -1,5 +1,5 @@
 # Characterise state of the game
-class GameState():
+class GameState:
     def __init__(self):
         # 8x8 board
         # lowercase is color b = black; w = white
@@ -40,41 +40,32 @@ class GameState():
 
         print(self.move_log[-1])
 
-
-class MoveRules(GameState):
-
-    def white_to_move_rule(self, row, col):
-        if self.white_to_move and self.board[row][col][0] == 'w':
-            return True
-
-        elif not self.white_to_move and self.board[row][col] == 'b':
-            return True
-
-        else:
-            return False
-
     def pond_rules(self, player_clicks):
         # White pond rules
-        if self.board[player_clicks[0][0]][player_clicks[0][1]][0] == 'w':
-            legal_positions = [
+        picked_piece = self.board[player_clicks[0][0]][player_clicks[0][1]]
+        # Basic move
+        if picked_piece[0] == 'w':
+            legal_positions = [[
                 player_clicks[0],
                 (player_clicks[0][0] - 1, player_clicks[0][1])
-            ]
-            print(f'lp = {legal_positions}')
-            print(f'pc = {player_clicks}')
-            print(legal_positions == player_clicks)
+            ]]
+            # first move
+            if player_clicks[0][0] == 6:
+                legal_positions.append([
+                    player_clicks[0],
+                    (player_clicks[0][0] - 2, player_clicks[0][1])
+                ])
 
-        elif self.board[player_clicks[0][0]][player_clicks[0][1]][0] == 'b':
-            legal_positions = [
+        elif picked_piece[0] == 'b':
+            legal_positions = [[
                 player_clicks[0],
                 (player_clicks[0][0] + 1, player_clicks[0][1])
-            ]
-            print(f'lp = {legal_positions}')
+            ]]
 
         else:
-            legal_positions = None
-        print(legal_positions)
-        if player_clicks == legal_positions:
+            legal_positions = []
+
+        if player_clicks in legal_positions:
             return True
 
         else:
