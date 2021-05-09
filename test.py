@@ -1,7 +1,4 @@
-x = 1
-y = 1
-a = 0
-b = 0
+def main():
+    bin_num = input('Wprowadź liczbę binarną')
 
-if x==1 and y==1 or a==0 and b==0:
-    print('teach')
+    if len(bin_num) == 32:

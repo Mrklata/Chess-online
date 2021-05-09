@@ -31,6 +31,8 @@ def main():
     running = True
     sq_selected = ()
     player_clicks = []
+    col = None
+    row = None
 
     while running:
         for e in pg.event.get():
@@ -54,6 +56,7 @@ def main():
                     if (len(player_clicks) == 0 and gs.white_to_move and current_piece[0] == 'w') or\
                             (len(player_clicks) == 0 and not gs.white_to_move and current_piece[0] == 'b'):
                         sq_selected = (row, col)
+                        pg.draw.rect(screen, (0, 0, 255), (SQ_SIZE * col, SQ_SIZE * row, SQ_SIZE, SQ_SIZE))
                         print(f'1sq = {sq_selected}')
                         player_clicks.append(sq_selected)
 
@@ -74,14 +77,16 @@ def main():
                                 player_clicks = []
                                 sq_selected = ()
 
-        draw_game_state(screen)
+        draw_game_state(screen, col, row)
         clock.tick(MAX_FPS)
         pg.display.flip()
 
 
 # Drawing game state
-def draw_game_state(screen):
+def draw_game_state(screen, col, row):
     draw_board(screen)
+    if col is not None:
+        pg.draw.rect(screen, (0, 0, 255), (SQ_SIZE * col, SQ_SIZE * row, SQ_SIZE, SQ_SIZE))
     draw_pieces(screen, gs.board)
 
 
