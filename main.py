@@ -33,6 +33,8 @@ def main():
     player_clicks = []
     col = None
     row = None
+    current_piece = None
+    legal_positions = None
 
     while running:
         for e in pg.event.get():
@@ -66,6 +68,7 @@ def main():
                         print(f'2sq = {sq_selected}')
                         player_clicks.append(sq_selected)
                         print(player_clicks)
+                        print(f'legal_positions = {legal_positions}')
                         if first_picked_piece[1] == 'P':
                             for i in gs.board:
                                 print(i)
@@ -77,16 +80,19 @@ def main():
                                 player_clicks = []
                                 sq_selected = ()
 
-        draw_game_state(screen, col, row)
+        draw_game_state(screen, col, row, current_piece, player_clicks, legal_positions)
         clock.tick(MAX_FPS)
         pg.display.flip()
 
 
 # Drawing game state
-def draw_game_state(screen, col, row):
+def draw_game_state(screen, col, row, current_piece, player_clicks, legal_positions):
     draw_board(screen)
-    if col is not None:
-        pg.draw.rect(screen, (0, 0, 255), (SQ_SIZE * col, SQ_SIZE * row, SQ_SIZE, SQ_SIZE))
+    if col is not None and current_piece != '..' and len(player_clicks) == 1:
+        pg.draw.rect(screen, pg.Color('light green'), (SQ_SIZE * col, SQ_SIZE * row, SQ_SIZE, SQ_SIZE))
+        for i in legal_positions:
+            pg.draw.rect(screen, pg.Color('light green'), (SQ_SIZE * i[0], SQ_SIZE * i[1], SQ_SIZE, SQ_SIZE))
+
     draw_pieces(screen, gs.board)
 
 

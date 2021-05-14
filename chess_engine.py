@@ -40,6 +40,7 @@ class GameState:
 
         print(self.move_log[-1])
 
+    # TODO: return legal positions after selecting first square in order to color legal positions
     def pond_rules(self, player_clicks):
         picked_piece = self.board[player_clicks[0][0]][player_clicks[0][1]]
         destination_piece = self.board[player_clicks[1][0]][player_clicks[1][1]]
@@ -66,6 +67,7 @@ class GameState:
                      (player_clicks[0][0] - 1, player_clicks[0][1] - 1)
                      ]
                 ]
+
         # Black pond rules
         # Basic move
         elif picked_piece[0] == 'b':
@@ -79,7 +81,7 @@ class GameState:
                     player_clicks[0],
                     (player_clicks[0][0] + 2, player_clicks[0][1])
                 ])
-
+            # Attack
             if destination_piece != '..':
                 legal_positions = [
                     [player_clicks[0],
@@ -93,7 +95,7 @@ class GameState:
             legal_positions = []
 
         if player_clicks in legal_positions:
-            return True
+            return True, legal_positions
 
         else:
-            return False
+            return False, legal_positions
