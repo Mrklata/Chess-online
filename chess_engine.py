@@ -43,59 +43,55 @@ class GameState:
     # TODO: return legal positions after selecting first square in order to color legal positions
     def pond_rules(self, player_clicks):
         picked_piece = self.board[player_clicks[0][0]][player_clicks[0][1]]
-        destination_piece = self.board[player_clicks[1][0]][player_clicks[1][1]]
         # White pond rules
         # Basic move
         if picked_piece[0] == 'w':
-            legal_positions = [[
-                player_clicks[0],
+            legal_positions = [
                 (player_clicks[0][0] - 1, player_clicks[0][1])
-            ]]
+            ]
+
+            legal_attacks = [
+                (player_clicks[0][0] - 1, player_clicks[0][1] + 1),
+                (player_clicks[0][0] - 1, player_clicks[0][1] - 1)
+            ]
+
             # First move
             if player_clicks[0][0] == 6:
-                legal_positions.append([
-                    player_clicks[0],
+                legal_positions.append(
                     (player_clicks[0][0] - 2, player_clicks[0][1])
-                ])
-            # Attack
-            if destination_piece != '..':
-                legal_positions = [
-                    [player_clicks[0],
-                     (player_clicks[0][0] - 1, player_clicks[0][1] + 1)
-                     ],
-                    [player_clicks[0],
-                     (player_clicks[0][0] - 1, player_clicks[0][1] - 1)
-                     ]
-                ]
+                )
 
         # Black pond rules
         # Basic move
         elif picked_piece[0] == 'b':
-            legal_positions = [[
-                player_clicks[0],
+            legal_positions = [
                 (player_clicks[0][0] + 1, player_clicks[0][1])
-            ]]
+            ]
+
+            legal_attacks = [
+                     (player_clicks[0][0] + 1, player_clicks[0][1] + 1),
+                     (player_clicks[0][0] + 1, player_clicks[0][1] - 1)
+                ]
             # First move
             if player_clicks[0][0] == 1:
-                legal_positions.append([
-                    player_clicks[0],
+                legal_positions.append(
                     (player_clicks[0][0] + 2, player_clicks[0][1])
-                ])
-            # Attack
-            if destination_piece != '..':
-                legal_positions = [
-                    [player_clicks[0],
-                     (player_clicks[0][0] + 1, player_clicks[0][1] + 1)
-                     ],
-                    [player_clicks[0],
-                     (player_clicks[0][0] + 1, player_clicks[0][1] - 1)
-                     ]
-                ]
+                )
+
         else:
             legal_positions = []
+            legal_attacks = []
 
-        if player_clicks in legal_positions:
-            return True, legal_positions
+        # Validation
+        validated_lp = []
+        validated_la = []
 
-        else:
-            return False, legal_positions
+        for pose in legal_positions:
+            if self.board[pose[0]][pose[1]] == '..':
+                validated_lp.append(pose)
+
+        for pose in legal_attacks:
+            if self.board[pose[0]][pose[1]] != '..' and self.board[pose[0]][pose[1]][0] != picked_piece[0]:
+                validated_la.append(pose)
+
+        return validated_lp, validated_la

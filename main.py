@@ -35,6 +35,7 @@ def main():
     row = None
     current_piece = None
     legal_positions = None
+    legal_attacks = None
 
     while running:
         for e in pg.event.get():
@@ -61,37 +62,45 @@ def main():
                         pg.draw.rect(screen, (0, 0, 255), (SQ_SIZE * col, SQ_SIZE * row, SQ_SIZE, SQ_SIZE))
                         print(f'1sq = {sq_selected}')
                         player_clicks.append(sq_selected)
+                        legal_positions = gs.pond_rules(player_clicks)[0]
+                        legal_attacks = gs.pond_rules(player_clicks)[1]
 
                     elif len(player_clicks) == 1:
                         first_picked_piece = gs.board[player_clicks[0][0]][player_clicks[0][1]]
                         sq_selected = (row, col)
                         print(f'2sq = {sq_selected}')
                         player_clicks.append(sq_selected)
-                        print(player_clicks)
-                        print(f'legal_positions = {legal_positions}')
+                        print(f'player clicks: {player_clicks}')
                         if first_picked_piece[1] == 'P':
                             for i in gs.board:
                                 print(i)
-                            if gs.pond_rules(player_clicks):
+
+                            legal_positions = gs.pond_rules(player_clicks)[0]
+                            legal_attacks = gs.pond_rules(player_clicks)[1]
+                            print(player_clicks[1])
+                            print(legal_attacks)
+                            print(player_clicks[1] in legal_attacks)
+                            if player_clicks[1] in legal_attacks or player_clicks[1] in legal_positions:
                                 gs.move(player_clicks)
                                 player_clicks = []
                                 sq_selected = ()
                             else:
                                 player_clicks = []
                                 sq_selected = ()
-
-        draw_game_state(screen, col, row, current_piece, player_clicks, legal_positions)
+        draw_game_state(screen, col, row, current_piece, player_clicks, legal_positions, legal_attacks)
         clock.tick(MAX_FPS)
         pg.display.flip()
 
 
 # Drawing game state
-def draw_game_state(screen, col, row, current_piece, player_clicks, legal_positions):
+def draw_game_state(screen, col, row, current_piece, player_clicks, legal_positions, legal_attacks):
     draw_board(screen)
     if col is not None and current_piece != '..' and len(player_clicks) == 1:
-        pg.draw.rect(screen, pg.Color('light green'), (SQ_SIZE * col, SQ_SIZE * row, SQ_SIZE, SQ_SIZE))
+        pg.draw.rect(screen, (0, 200, 0), (SQ_SIZE * col, SQ_SIZE * row, SQ_SIZE, SQ_SIZE))
         for i in legal_positions:
-            pg.draw.rect(screen, pg.Color('light green'), (SQ_SIZE * i[0], SQ_SIZE * i[1], SQ_SIZE, SQ_SIZE))
+            pg.draw.rect(screen, (0, 255, 0), (SQ_SIZE * i[1], SQ_SIZE * i[0], SQ_SIZE, SQ_SIZE))
+        for i in legal_attacks:
+            pg.draw.rect(screen, (255, 100, 100), (SQ_SIZE * i[1], SQ_SIZE * i[0], SQ_SIZE, SQ_SIZE))
 
     draw_pieces(screen, gs.board)
 
