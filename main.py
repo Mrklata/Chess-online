@@ -4,7 +4,7 @@ import chess_engine
 
 # initiate classes
 # move = chess_engine.Move()
-gs = chess_engine.GameState()
+mv = chess_engine.Move()
 # General game variables
 WIDTH = 512
 HEIGHT = 512
@@ -46,7 +46,7 @@ def main():
                 location = pg.mouse.get_pos()
                 col = location[0]//SQ_SIZE
                 row = location[1]//SQ_SIZE
-                current_piece = gs.board[row][col]
+                current_piece = mv.game_state.board[row][col]
 
                 if sq_selected == (row, col):
                     sq_selected = ()
@@ -56,32 +56,32 @@ def main():
                     sq_selected = ()
 
                 else:
-                    if (len(player_clicks) == 0 and gs.white_to_move and current_piece[0] == 'w') or\
-                            (len(player_clicks) == 0 and not gs.white_to_move and current_piece[0] == 'b'):
+                    if (len(player_clicks) == 0 and mv.game_state.white_to_move and current_piece[0] == 'w') or\
+                            (len(player_clicks) == 0 and not mv.game_state.white_to_move and current_piece[0] == 'b'):
                         sq_selected = (row, col)
                         pg.draw.rect(screen, (0, 0, 255), (SQ_SIZE * col, SQ_SIZE * row, SQ_SIZE, SQ_SIZE))
                         print(f'1sq = {sq_selected}')
                         player_clicks.append(sq_selected)
-                        legal_positions = gs.pond_rules(player_clicks)[0]
-                        legal_attacks = gs.pond_rules(player_clicks)[1]
+                        legal_positions = mv.pond_rules(player_clicks)[0]
+                        legal_attacks = mv.pond_rules(player_clicks)[1]
 
                     elif len(player_clicks) == 1:
-                        first_picked_piece = gs.board[player_clicks[0][0]][player_clicks[0][1]]
+                        first_picked_piece = mv.game_state.board[player_clicks[0][0]][player_clicks[0][1]]
                         sq_selected = (row, col)
                         print(f'2sq = {sq_selected}')
                         player_clicks.append(sq_selected)
                         print(f'player clicks: {player_clicks}')
                         if first_picked_piece[1] == 'P':
-                            for i in gs.board:
+                            for i in mv.game_state.board:
                                 print(i)
 
-                            legal_positions = gs.pond_rules(player_clicks)[0]
-                            legal_attacks = gs.pond_rules(player_clicks)[1]
+                            legal_positions = mv.pond_rules(player_clicks)[0]
+                            legal_attacks = mv.pond_rules(player_clicks)[1]
                             print(player_clicks[1])
                             print(legal_attacks)
                             print(player_clicks[1] in legal_attacks)
                             if player_clicks[1] in legal_attacks or player_clicks[1] in legal_positions:
-                                gs.move(player_clicks)
+                                mv.move(player_clicks)
                                 player_clicks = []
                                 sq_selected = ()
                             else:
@@ -102,7 +102,7 @@ def draw_game_state(screen, col, row, current_piece, player_clicks, legal_positi
         for i in legal_attacks:
             pg.draw.rect(screen, (255, 100, 100), (SQ_SIZE * i[1], SQ_SIZE * i[0], SQ_SIZE, SQ_SIZE))
 
-    draw_pieces(screen, gs.board)
+    draw_pieces(screen, mv.game_state.board)
 
 
 # Drawing board

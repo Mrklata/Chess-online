@@ -18,31 +18,31 @@ class GameState:
         self.white_to_move = True
         self.move_log = []
 
+
+class Move():
+    def __init__(self):
+        self.game_state = GameState()
+
     def move(self, player_clicks):
         move_from_row = player_clicks[0][0]
         move_from_col = player_clicks[0][1]
         move_to_row = player_clicks[1][0]
         move_to_col = player_clicks[1][1]
 
-        move_from_piece = self.board[move_from_row][move_from_col]
+        move_from_piece = self.game_state.board[move_from_row][move_from_col]
 
-        self.board[move_to_row][move_to_col] = move_from_piece
-        self.board[move_from_row][move_from_col] = '..'
+        self.game_state.board[move_to_row][move_to_col] = move_from_piece
+        self.game_state.board[move_from_row][move_from_col] = '..'
 
-        self.move_log.append({'piece': move_from_piece, 'from': f'row: {move_from_row}, col: {move_from_col}',
+        self.game_state.move_log.append({'piece': move_from_piece, 'from': f'row: {move_from_row}, col: {move_from_col}',
                               'to': f'row: {move_to_row}, col: {move_to_col}'})
 
-        if self.white_to_move:
-            self.white_to_move = False
+        self.game_state.white_to_move = not self.game_state.white_to_move
 
-        else:
-            self.white_to_move = True
+        print(self.game_state.move_log[-1])
 
-        print(self.move_log[-1])
-
-    # TODO: return legal positions after selecting first square in order to color legal positions
     def pond_rules(self, player_clicks):
-        picked_piece = self.board[player_clicks[0][0]][player_clicks[0][1]]
+        picked_piece = self.game_state.board[player_clicks[0][0]][player_clicks[0][1]]
         # White pond rules
         # Basic move
         if picked_piece[0] == 'w':
@@ -87,11 +87,11 @@ class GameState:
         validated_la = []
 
         for pose in legal_positions:
-            if self.board[pose[0]][pose[1]] == '..':
+            if self.game_state.board[pose[0]][pose[1]] == '..':
                 validated_lp.append(pose)
 
         for pose in legal_attacks:
-            if self.board[pose[0]][pose[1]] != '..' and self.board[pose[0]][pose[1]][0] != picked_piece[0]:
+            if self.game_state.board[pose[0]][pose[1]] != '..' and self.game_state.board[pose[0]][pose[1]][0] != picked_piece[0]:
                 validated_la.append(pose)
 
         return validated_lp, validated_la
