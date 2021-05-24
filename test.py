@@ -1,6 +1,6 @@
-x = 5
-y = 4
-r = 3
-w = 2
-if (x == 2 or y == 9) or (r == 2 or w == 1):
-    print('no')
+v_l_p = [(5, 4)]
+max_v = range(8)
+
+v_l_p = [(pose[0], max_v[::-1][pose[1]]) for pose in v_l_p]
+
+print(f"vlp = {v_l_p}")

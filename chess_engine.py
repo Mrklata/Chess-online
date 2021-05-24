@@ -6,24 +6,32 @@ class GameState:
         # uppercase is a figure
         # '..' = empty field
         self.board = [
-            ['bR', 'bN', 'bB', 'bQ', 'bK', 'bB', 'bN', 'bR'],
-            ['bP', 'bP', 'bP', 'bP', 'bP', 'bP', 'bP', 'bP'],
-            ['..', '..', '..', '..', '..', '..', '..', '..'],
-            ['..', '..', '..', '..', '..', '..', '..', '..'],
-            ['..', '..', '..', '..', '..', '..', '..', '..'],
-            ['..', '..', '..', '..', '..', '..', '..', '..'],
-            ['wP', 'wP', 'wP', 'wP', 'wP', 'wP', 'wP', 'wP'],
-            ['wR', 'wN', 'wB', 'wQ', 'wK', 'wB', 'wN', 'wR'],
+            ["bR", "bN", "bB", "bQ", "bK", "bB", "bN", "bR"],
+            ["bP", "bP", "bP", "bP", "bP", "bP", "bP", "bP"],
+            ["..", "..", "..", "..", "..", "..", "..", ".."],
+            ["..", "..", "..", "..", "..", "..", "..", ".."],
+            ["..", "..", "..", "..", "..", "..", "..", ".."],
+            ["..", "..", "..", "..", "..", "..", "..", ".."],
+            ["wP", "wP", "wP", "wP", "wP", "wP", "wP", "wP"],
+            ["wR", "wN", "wB", "wQ", "wK", "wB", "wN", "wR"],
         ]
         self.white_to_move = True
         self.move_log = []
 
 
-class Move():
+class Move:
     def __init__(self):
         self.game_state = GameState()
+        self.v_l_a = []
+        self.v_l_p = []
+        self.max_v = range(8)
 
     def move(self, player_clicks):
+        """
+        Define movement
+        :param player_clicks: list of max two tuples
+        :return: str - latest game log
+        """
         move_from_row = player_clicks[0][0]
         move_from_col = player_clicks[0][1]
         move_to_row = player_clicks[1][0]
@@ -32,51 +40,48 @@ class Move():
         move_from_piece = self.game_state.board[move_from_row][move_from_col]
 
         self.game_state.board[move_to_row][move_to_col] = move_from_piece
-        self.game_state.board[move_from_row][move_from_col] = '..'
+        self.game_state.board[move_from_row][move_from_col] = ".."
 
-        self.game_state.move_log.append({'piece': move_from_piece, 'from': f'row: {move_from_row}, col: {move_from_col}',
-                              'to': f'row: {move_to_row}, col: {move_to_col}'})
+        self.game_state.move_log.append(
+            {
+                "piece": move_from_piece,
+                "from": f"row: {move_from_row}, col: {move_from_col}",
+                "to": f"row: {move_to_row}, col: {move_to_col}",
+            }
+        )
 
         self.game_state.white_to_move = not self.game_state.white_to_move
 
-        print(self.game_state.move_log[-1])
+        return self.game_state.move_log[-1]
 
-    def pond_rules(self, player_clicks):
+    def rules(self, player_clicks):
         picked_piece = self.game_state.board[player_clicks[0][0]][player_clicks[0][1]]
         # White pond rules
         # Basic move
-        if picked_piece[0] == 'w':
-            legal_positions = [
-                (player_clicks[0][0] - 1, player_clicks[0][1])
-            ]
+        if picked_piece[0] == "w":
+            legal_positions = [(player_clicks[0][0] - 1, player_clicks[0][1])]
 
             legal_attacks = [
                 (player_clicks[0][0] - 1, player_clicks[0][1] + 1),
-                (player_clicks[0][0] - 1, player_clicks[0][1] - 1)
+                (player_clicks[0][0] - 1, player_clicks[0][1] - 1),
             ]
 
             # First move
             if player_clicks[0][0] == 6:
-                legal_positions.append(
-                    (player_clicks[0][0] - 2, player_clicks[0][1])
-                )
+                legal_positions.append((player_clicks[0][0] - 2, player_clicks[0][1]))
 
         # Black pond rules
         # Basic move
-        elif picked_piece[0] == 'b':
-            legal_positions = [
-                (player_clicks[0][0] + 1, player_clicks[0][1])
-            ]
+        elif picked_piece[0] == "b":
+            legal_positions = [(player_clicks[0][0] + 1, player_clicks[0][1])]
 
             legal_attacks = [
-                     (player_clicks[0][0] + 1, player_clicks[0][1] + 1),
-                     (player_clicks[0][0] + 1, player_clicks[0][1] - 1)
-                ]
+                (player_clicks[0][0] + 1, player_clicks[0][1] + 1),
+                (player_clicks[0][0] + 1, player_clicks[0][1] - 1),
+            ]
             # First move
             if player_clicks[0][0] == 1:
-                legal_positions.append(
-                    (player_clicks[0][0] + 2, player_clicks[0][1])
-                )
+                legal_positions.append((player_clicks[0][0] + 2, player_clicks[0][1]))
 
         else:
             legal_positions = []
@@ -87,11 +92,170 @@ class Move():
         validated_la = []
 
         for pose in legal_positions:
-            if self.game_state.board[pose[0]][pose[1]] == '..':
+            if self.game_state.board[pose[0]][pose[1]] == "..":
                 validated_lp.append(pose)
 
         for pose in legal_attacks:
-            if self.game_state.board[pose[0]][pose[1]] != '..' and self.game_state.board[pose[0]][pose[1]][0] != picked_piece[0]:
+            if (
+                self.game_state.board[pose[0]][pose[1]] != ".."
+                and self.game_state.board[pose[0]][pose[1]][0] != picked_piece[0]
+            ):
                 validated_la.append(pose)
 
         return validated_lp, validated_la
+
+    def clear_out_of_bounds(self, legal_positions):
+
+        validated_legal_positions = []
+
+        for pose in legal_positions:
+            if (pose[0] in self.max_v) and (pose[1] in self.max_v):
+                validated_legal_positions.append(pose)
+
+        return validated_legal_positions
+
+    def pond_rules(self, player_clicks):
+        legal_positions = []
+        legal_attacks = []
+        picked_piece = self.game_state.board[player_clicks[0][0]][player_clicks[0][1]]
+        max_moves = range(1, 9)
+
+        # Moves
+        straight_move = []
+        for i in max_moves:
+            straight_move.append((player_clicks[0][0] - i, player_clicks[0][1]))
+
+        back_move = []
+        for i in max_moves:
+            back_move.append((player_clicks[0][0] + i, player_clicks[0][1]))
+
+        left_move = []
+        right_move = []
+        for i in max_moves:
+            left_move.append((player_clicks[0][0], player_clicks[0][1] + i))
+            right_move.append((player_clicks[0][0], player_clicks[0][1] - i))
+
+        oblique_plus_plus_move = []
+        oblique_minus_minus_move = []
+        oblique_minus_plus_move = []
+        oblique_plus_minus_move = []
+
+        for i in max_moves:
+            oblique_plus_plus_move.append(
+                (player_clicks[0][0] + i, player_clicks[0][1] + i)
+            )
+            oblique_minus_minus_move.append(
+                (player_clicks[0][0] - i, player_clicks[0][1] - i)
+            )
+            oblique_minus_plus_move.append(
+                (player_clicks[0][0] - i, player_clicks[0][1] + i)
+            )
+            oblique_plus_minus_move.append(
+                (player_clicks[0][0] + i, player_clicks[0][1] - i)
+            )
+
+        # Attacks
+        straight_back_attack = []
+        for i in max_moves:
+            straight_back_attack.append((player_clicks[0][0] + i, player_clicks[0][1]))
+            straight_back_attack.append((player_clicks[0][0] - i, player_clicks[0][1]))
+
+        left_right_attack = []
+        for i in max_moves:
+            left_right_attack.append((player_clicks[0][0], player_clicks[0][1] + i))
+            left_right_attack.append((player_clicks[0][0], player_clicks[0][1] - i))
+
+        oblique_attack = []
+        for i in max_moves:
+            oblique_attack.append((player_clicks[0][0] + i, player_clicks[0][1] + i))
+            oblique_attack.append((player_clicks[0][0] - i, player_clicks[0][1] - i))
+            oblique_attack.append((player_clicks[0][0] - i, player_clicks[0][1] + i))
+            oblique_attack.append((player_clicks[0][0] + i, player_clicks[0][1] - i))
+
+        if picked_piece[1] == "P":
+            legal_positions.append(straight_move[0])
+            legal_attacks.append(oblique_attack[1])
+            legal_attacks.append(oblique_attack[2])
+
+            print(legal_positions)
+            # TODO: Fix black pieces
+            if picked_piece[0] == "b":
+                legal_positions = [
+                    (self.max_v[::-1][pose[0]], (pose[1])) for pose in legal_positions
+                ]
+                legal_attacks = [
+                    (self.max_v[::-1][pose[0]], (pose[1])) for pose in legal_attacks
+                ]
+
+            print(legal_positions)
+
+            validated_legal_positions = self.clear_out_of_bounds(legal_positions)
+            validated_legal_attacks = self.clear_out_of_bounds(legal_attacks)
+
+            self.v_l_p = [
+                pose
+                for pose in validated_legal_positions
+                if self.game_state.board[pose[0]][pose[1]] == ".."
+            ]
+
+            self.v_l_a = [
+                attack
+                for attack in validated_legal_attacks
+                if (
+                    self.game_state.board[attack[0]][attack[1]] != ".."
+                    and self.game_state.board[attack[0]][attack[1]][0]
+                    != picked_piece[0]
+                )
+            ]
+        # TODO: Fix work of tower
+        # elif picked_piece[1] == "R":
+        #
+        #     for pose in straight_move:
+        #         if self.game_state.board[pose[0]][pose[1]] == "..":
+        #             self.v_l_p.append(pose)
+        #         elif self.game_state.board[pose[0]][pose[1]][0] != picked_piece[0]:
+        #             self.v_l_a.append(pose)
+        #             break
+        #
+        #     legal_positions.append(straight_move)
+        #     legal_positions.append(back_move)
+        #     legal_positions.append(right_move)
+        #     legal_positions.append(left_move)
+        #     legal_positions = [item for sublist in legal_positions for item in sublist]
+        #
+        #     validated_legal_positions = self.clear_out_of_bounds(legal_positions)
+        #     validated_legal_attacks = self.clear_out_of_bounds(legal_attacks)
+        #
+        #     for pose in validated_legal_positions:
+        #         if self.game_state.board[pose[0]][pose[1]] == "..":
+        #             self.v_l_p.append(pose)
+        #         elif self.game_state.board[pose[0]][pose[1]][0] != picked_piece[0]:
+        #             validated_legal_attacks.append(pose)
+        #             break
+        #
+        #     self.v_l_a = [
+        #         attack
+        #         for attack in validated_legal_attacks
+        #         if (
+        #             self.game_state.board[attack[0]][attack[1]] != ".."
+        #             and self.game_state.board[attack[0]][attack[1]][0]
+        #             != picked_piece[0]
+        #         )
+        #     ]
+
+        elif picked_piece[1] == "N":
+            pass
+        elif picked_piece[1] == "B":
+            pass
+        elif picked_piece[1] == "Q":
+            pass
+        elif picked_piece[1] == "K":
+            pass
+
+        # legal_positions = [item for sublist in legal_positions for item in sublist]
+        # legal_attacks = [item for sublist in legal_attacks for item in sublist]
+
+        print(f"vla = {self.v_l_a}")
+        print(f"vlp = {self.v_l_p}")
+
+        return self.v_l_p, self.v_l_a
