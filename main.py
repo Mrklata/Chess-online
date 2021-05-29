@@ -86,25 +86,24 @@ def main():
                         # print(f"2sq = {sq_selected}")
                         player_clicks.append(sq_selected)
                         # print(f"player clicks: {player_clicks}")
-                        if first_picked_piece[1] == "P":
-                            for i in mv.game_state.board:
-                                print(i)
+                        for i in mv.game_state.board:
+                            print(i)
 
-                            legal_positions = mv.pond_rules(player_clicks)[0]
-                            legal_attacks = mv.pond_rules(player_clicks)[1]
-                            # print(player_clicks[1])
-                            # print(legal_attacks)
-                            # print(player_clicks[1] in legal_attacks)
-                            if (
-                                player_clicks[1] in legal_attacks
-                                or player_clicks[1] in legal_positions
-                            ):
-                                mv.move(player_clicks)
-                                player_clicks = []
-                                sq_selected = ()
-                            else:
-                                player_clicks = []
-                                sq_selected = ()
+                        legal_positions = mv.pond_rules(player_clicks)[0]
+                        legal_attacks = mv.pond_rules(player_clicks)[1]
+                        # print(player_clicks[1])
+                        # print(legal_attacks)
+                        # print(player_clicks[1] in legal_attacks)
+                        if (
+                            player_clicks[1] in legal_attacks
+                            or player_clicks[1] in legal_positions
+                        ):
+                            mv.move(player_clicks)
+                            player_clicks = []
+                            sq_selected = ()
+                        else:
+                            player_clicks = []
+                            sq_selected = ()
         draw_game_state(
             screen,
             col,
