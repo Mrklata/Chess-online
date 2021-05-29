@@ -54,61 +54,6 @@ class Move:
 
         return self.game_state.move_log[-1]
 
-    # def rules(self, player_clicks):
-    #     """
-    #     def
-    #     :param player_clicks:
-    #     :return:
-    #     """
-    #     picked_piece = self.game_state.board[player_clicks[0][0]][player_clicks[0][1]]
-    #     # White pond rules
-    #     # Basic move
-    #     if picked_piece[0] == "w":
-    #         legal_positions = [(player_clicks[0][0] - 1, player_clicks[0][1])]
-    #
-    #         legal_attacks = [
-    #             (player_clicks[0][0] - 1, player_clicks[0][1] + 1),
-    #             (player_clicks[0][0] - 1, player_clicks[0][1] - 1),
-    #         ]
-    #
-    #         # First move
-    #         if player_clicks[0][0] == 6:
-    #             legal_positions.append((player_clicks[0][0] - 2, player_clicks[0][1]))
-    #
-    #     # Black pond rules
-    #     # Basic move
-    #     elif picked_piece[0] == "b":
-    #         legal_positions = [(player_clicks[0][0] + 1, player_clicks[0][1])]
-    #
-    #         legal_attacks = [
-    #             (player_clicks[0][0] + 1, player_clicks[0][1] + 1),
-    #             (player_clicks[0][0] + 1, player_clicks[0][1] - 1),
-    #         ]
-    #         # First move
-    #         if player_clicks[0][0] == 1:
-    #             legal_positions.append((player_clicks[0][0] + 2, player_clicks[0][1]))
-    #
-    #     else:
-    #         legal_positions = []
-    #         legal_attacks = []
-    #
-    #     # Validation
-    #     validated_lp = []
-    #     validated_la = []
-    #
-    #     for pose in legal_positions:
-    #         if self.game_state.board[pose[0]][pose[1]] == "..":
-    #             validated_lp.append(pose)
-    #
-    #     for pose in legal_attacks:
-    #         if (
-    #             self.game_state.board[pose[0]][pose[1]] != ".."
-    #             and self.game_state.board[pose[0]][pose[1]][0] != picked_piece[0]
-    #         ):
-    #             validated_la.append(pose)
-    #
-    #     return validated_lp, validated_la
-
     def clear_out_of_bounds(self, legal_positions):
         """
         clear legal positions of positions 7<lp<0
@@ -170,7 +115,7 @@ class Move:
             )
         ]
 
-    def pond_rules(self, player_clicks):
+    def rules(self, player_clicks):
         """
         specify rules for every piece
         :param player_clicks: list - list of max two tuples
@@ -331,8 +276,9 @@ class Move:
                 attack
                 for attack in validated_legal_attacks
                 if (
-                        self.game_state.board[attack[0]][attack[1]] != ".."
-                        and self.game_state.board[attack[0]][attack[1]][0] != picked_piece[0]
+                    self.game_state.board[attack[0]][attack[1]] != ".."
+                    and self.game_state.board[attack[0]][attack[1]][0]
+                    != picked_piece[0]
                 )
             ]
 
