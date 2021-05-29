@@ -138,9 +138,37 @@ class Move:
                 if self.game_state.board[pose[0]][pose[1]] == "..":
                     legal_positions.append(pose)
 
-                elif self.game_state.board[pose[0]][pose[1]] != '..':
+                elif self.game_state.board[pose[0]][pose[1]] != "..":
                     legal_attacks.append(pose)
                     break
+
+    def multiple_moves(self, list_moves, legal_positions, legal_attacks, picked_piece):
+        for element in list_moves:
+            self.until_obstacle(element, legal_positions, legal_attacks)
+        # else:
+        #     for element in list_moves:
+        #         legal_positions.append(element[0])
+        #         legal_attacks.append(element[0])
+        # legal_positions = [item for sublist in legal_positions for item in sublist]
+
+        validated_legal_positions = self.clear_out_of_bounds(legal_positions)
+        validated_legal_attacks = self.clear_out_of_bounds(legal_attacks)
+
+        for pose in validated_legal_positions:
+            if self.game_state.board[pose[0]][pose[1]] == "..":
+                self.v_l_p.append(pose)
+            elif self.game_state.board[pose[0]][pose[1]][0] != picked_piece[0]:
+                validated_legal_attacks.append(pose)
+                break
+
+        self.v_l_a = [
+            attack
+            for attack in validated_legal_attacks
+            if (
+                self.game_state.board[attack[0]][attack[1]] != ".."
+                and self.game_state.board[attack[0]][attack[1]][0] != picked_piece[0]
+            )
+        ]
 
     def pond_rules(self, player_clicks):
         """
@@ -216,14 +244,12 @@ class Move:
             print(legal_positions)
 
             if picked_piece[0] == "b":
-                legal_positions = [
-                    (pose[0] + 2, (pose[1])) for pose in legal_positions
-                ]
-                legal_attacks = [
-                    (pose[0] + 2, (pose[1])) for pose in legal_attacks
-                ]
+                legal_positions = [(pose[0] + 2, (pose[1])) for pose in legal_positions]
+                legal_attacks = [(pose[0] + 2, (pose[1])) for pose in legal_attacks]
                 if player_clicks[0][0] == 1:
-                    legal_positions.append((player_clicks[0][0] + 2, player_clicks[0][1]))
+                    legal_positions.append(
+                        (player_clicks[0][0] + 2, player_clicks[0][1])
+                    )
 
             print(legal_positions)
 
@@ -245,15 +271,52 @@ class Move:
                     != picked_piece[0]
                 )
             ]
-        # TODO: Fix work of tower
         elif picked_piece[1] == "R":
+            list_moves = [straight_move, left_move, back_move, right_move]
+            self.multiple_moves(
+                list_moves, legal_positions, legal_attacks, picked_piece
+            )
 
-            self.until_obstacle(straight_move, legal_positions, legal_attacks)
-            self.until_obstacle(back_move, legal_positions, legal_attacks)
-            self.until_obstacle(right_move, legal_positions, legal_attacks)
-            self.until_obstacle(left_move, legal_positions, legal_attacks)
-
-            # legal_positions = [item for sublist in legal_positions for item in sublist]
+        elif picked_piece[1] == "N":
+            pass
+        elif picked_piece[1] == "B":
+            list_moves = [
+                oblique_minus_minus_move,
+                oblique_plus_plus_move,
+                oblique_plus_minus_move,
+                oblique_minus_plus_move,
+            ]
+            self.multiple_moves(
+                list_moves, legal_positions, legal_attacks, picked_piece
+            )
+        elif picked_piece[1] == "Q":
+            list_moves = [
+                oblique_minus_minus_move,
+                oblique_plus_plus_move,
+                oblique_plus_minus_move,
+                oblique_minus_plus_move,
+                left_move,
+                right_move,
+                back_move,
+                straight_move,
+            ]
+            self.multiple_moves(
+                list_moves, legal_positions, legal_attacks, picked_piece
+            )
+        elif picked_piece[1] == "K":
+            list_moves = [
+                oblique_minus_minus_move,
+                oblique_plus_plus_move,
+                oblique_plus_minus_move,
+                oblique_minus_plus_move,
+                left_move,
+                right_move,
+                back_move,
+                straight_move,
+            ]
+            for i in list_moves:
+                legal_positions.append(i[0])
+                legal_attacks.append(i[0])
 
             validated_legal_positions = self.clear_out_of_bounds(legal_positions)
             validated_legal_attacks = self.clear_out_of_bounds(legal_attacks)
@@ -263,26 +326,15 @@ class Move:
                     self.v_l_p.append(pose)
                 elif self.game_state.board[pose[0]][pose[1]][0] != picked_piece[0]:
                     validated_legal_attacks.append(pose)
-                    break
 
             self.v_l_a = [
                 attack
                 for attack in validated_legal_attacks
                 if (
                         self.game_state.board[attack[0]][attack[1]] != ".."
-                        and self.game_state.board[attack[0]][attack[1]][0]
-                        != picked_piece[0]
+                        and self.game_state.board[attack[0]][attack[1]][0] != picked_piece[0]
                 )
             ]
-
-        elif picked_piece[1] == "N":
-            pass
-        elif picked_piece[1] == "B":
-            pass
-        elif picked_piece[1] == "Q":
-            pass
-        elif picked_piece[1] == "K":
-            pass
 
         # legal_positions = [item for sublist in legal_positions for item in sublist]
         # legal_attacks = [item for sublist in legal_attacks for item in sublist]
