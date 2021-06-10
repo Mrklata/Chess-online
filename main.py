@@ -3,8 +3,8 @@ import chess_engine
 
 
 # initiate classes
-# move = chess_engine.Move()
 mv = chess_engine.Move()
+
 # General game variables
 WIDTH = 512
 HEIGHT = 512
@@ -73,27 +73,19 @@ def main():
                             (0, 0, 255),
                             (SQ_SIZE * col, SQ_SIZE * row, SQ_SIZE, SQ_SIZE),
                         )
-                        # print(f"1sq = {sq_selected}")
                         player_clicks.append(sq_selected)
-                        legal_positions = mv.pond_rules(player_clicks)[0]
-                        legal_attacks = mv.pond_rules(player_clicks)[1]
+                        legal_positions = mv.rules(player_clicks)[0]
+                        legal_attacks = mv.rules(player_clicks)[1]
 
                     elif len(player_clicks) == 1:
-                        first_picked_piece = mv.game_state.board[player_clicks[0][0]][
-                            player_clicks[0][1]
-                        ]
                         sq_selected = (row, col)
-                        # print(f"2sq = {sq_selected}")
                         player_clicks.append(sq_selected)
-                        # print(f"player clicks: {player_clicks}")
                         for i in mv.game_state.board:
                             print(i)
 
-                        legal_positions = mv.pond_rules(player_clicks)[0]
-                        legal_attacks = mv.pond_rules(player_clicks)[1]
-                        # print(player_clicks[1])
-                        # print(legal_attacks)
-                        # print(player_clicks[1] in legal_attacks)
+                        legal_positions = mv.rules(player_clicks)[0]
+                        legal_attacks = mv.rules(player_clicks)[1]
+
                         if (
                             player_clicks[1] in legal_attacks
                             or player_clicks[1] in legal_positions
@@ -128,13 +120,13 @@ def draw_game_state(
         )
         for i in legal_positions:
             pg.draw.rect(
-                screen, (0, 255, 0), (SQ_SIZE * i[1], SQ_SIZE * i[0], SQ_SIZE, SQ_SIZE)
+                screen, (0, 255, 0), (SQ_SIZE * i[1], SQ_SIZE * i[0], SQ_SIZE, SQ_SIZE), 3
             )
         for i in legal_attacks:
             pg.draw.rect(
                 screen,
                 (255, 100, 100),
-                (SQ_SIZE * i[1], SQ_SIZE * i[0], SQ_SIZE, SQ_SIZE),
+                (SQ_SIZE * i[1], SQ_SIZE * i[0], SQ_SIZE, SQ_SIZE), 3
             )
 
     draw_pieces(screen, mv.game_state.board)
