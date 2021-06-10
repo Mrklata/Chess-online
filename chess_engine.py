@@ -70,7 +70,7 @@ class Move:
             if (
                     (self.game_state.board[attack[0]][attack[1]] != "..")
                     and (self.game_state.board[attack[0]][attack[1]][0] !=
-                         self.game_state.board[picked_piece[0][0]][picked_piece[0][1]][0])
+                         picked_piece[0])
             )
         ]
 
@@ -220,7 +220,7 @@ class Move:
             validated_legal_attacks = validated_legal_positions
 
             self.position_validation(validated_legal_positions)
-            self.attack_validation(validated_legal_attacks, player_clicks)
+            self.attack_validation(validated_legal_attacks, picked_piece)
             print(self.v_l_a)
         elif picked_piece[1] == "B":
             list_moves = [
