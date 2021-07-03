@@ -27,6 +27,7 @@ class Move:
         self.max_v = range(8)
         self.mv_board = self.game_state.board
 
+
     def move(self, player_clicks):
         """
         Define movement
@@ -72,6 +73,12 @@ class Move:
         ]
 
     def attack_validation(self, validated_legal_attacks, picked_piece):
+        """
+
+        :param validated_legal_attacks:
+        :param picked_piece:
+        :return:
+        """
         self.v_l_a = [
 
             attack
@@ -303,3 +310,12 @@ class Move:
         print(f"vlp = {self.v_l_p}")
 
         return self.v_l_p, self.v_l_a
+
+    def fields_under_attack(self):
+        self.fields_u_a = []
+        for row in self.max_v:
+            for col in self.max_v:
+                player_clicks = (row, col)
+                self.fields_u_a.append(self.rules(player_clicks))
+
+        self.fields_u_a = [item for sublist in self.fields_u_a for item in sublist]
