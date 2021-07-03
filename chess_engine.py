@@ -324,32 +324,18 @@ class Move:
     def fields_under_attack(self, player_clicks):
         attacks = []
         positions = []
+        positions_matrix = []
+        attacks_matrix = []
         for row in self.max_v:
             for col in self.max_v:
                 clicks = [(row, col)]
                 attacks.append(self.rules(clicks)[1])
                 positions.append(self.rules(clicks)[0])
         self.fields_u_a = attacks
-        attacks_matrix = [
-            attacks[0:7],
-            attacks[8:15],
-            attacks[16:23],
-            attacks[24:31],
-            attacks[32:39],
-            attacks[40:47],
-            attacks[48:55],
-            attacks[56:63]
-        ]
-        positions_matrix = [
-            positions[0:7],
-            positions[8:15],
-            positions[16:23],
-            positions[24:31],
-            positions[32:39],
-            positions[40:47],
-            positions[48:55],
-            positions[56:63]
-        ]
+        for i in range(0, 57, 8):
+            attacks_matrix.append([item for item in attacks[i:i+8]])
+            positions_matrix.append([item for item in positions[i:i+8]])
+
         position = positions_matrix[player_clicks[0][0]][player_clicks[0][1]]
         attack = attacks_matrix[player_clicks[0][0]][player_clicks[0][1]]
         return position, attack
