@@ -74,8 +74,8 @@ def main():
                             (SQ_SIZE * col, SQ_SIZE * row, SQ_SIZE, SQ_SIZE),
                         )
                         player_clicks.append(sq_selected)
-                        legal_positions = mv.rules(player_clicks)[0]
-                        legal_attacks = mv.rules(player_clicks)[1]
+                        legal_positions = mv.fields_under_attack(player_clicks)[0]
+                        legal_attacks = mv.fields_under_attack(player_clicks)[1]
 
                     elif len(player_clicks) == 1:
                         sq_selected = (row, col)
@@ -83,8 +83,8 @@ def main():
                         for i in mv.game_state.board:
                             print(i)
 
-                        legal_positions = mv.rules(player_clicks)[0]
-                        legal_attacks = mv.rules(player_clicks)[1]
+                        legal_positions = mv.fields_under_attack(player_clicks)[0]
+                        legal_attacks = mv.fields_under_attack(player_clicks)[1]
 
                         if (
                             player_clicks[1] in legal_attacks
@@ -120,13 +120,17 @@ def draw_game_state(
         )
         for i in legal_positions:
             pg.draw.rect(
-                screen, (0, 255, 0), (SQ_SIZE * i[1], SQ_SIZE * i[0], SQ_SIZE, SQ_SIZE), 3
+                screen,
+                (0, 255, 0),
+                (SQ_SIZE * i[1], SQ_SIZE * i[0], SQ_SIZE, SQ_SIZE),
+                3,
             )
         for i in legal_attacks:
             pg.draw.rect(
                 screen,
                 (255, 100, 100),
-                (SQ_SIZE * i[1], SQ_SIZE * i[0], SQ_SIZE, SQ_SIZE), 3
+                (SQ_SIZE * i[1], SQ_SIZE * i[0], SQ_SIZE, SQ_SIZE),
+                3,
             )
 
     draw_pieces(screen, mv.game_state.board)
