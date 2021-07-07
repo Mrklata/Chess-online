@@ -90,10 +90,25 @@ class Move:
         self.v_l_a = [
             attack
             for attack in validated_legal_attacks
-            if (
-                (self.game_state.board[attack[0]][attack[1]] != "..")
-                and (self.game_state.board[attack[0]][attack[1]][0] != picked_piece[0])
-            )
+            if self.game_state.board[attack[0]][attack[1]][0] != picked_piece[0]
+        ]
+
+        # self.v_l_a = [
+        #     attack
+        #     for attack in self.fields_u_a
+        #     if self.game_state.board[attack[0]][attack[1]] != '..'
+        # ]
+
+    def second_attack_validation(self, validated_legal_attack):
+        """
+
+        :param validated_legal_attack:
+        :return:
+        """
+        self.v_l_a = [
+            attack
+            for attack in validated_legal_attack
+            if self.game_state.board[attack[0]][attack[1]] != '..'
         ]
 
     def castling_move(self):
@@ -166,7 +181,6 @@ class Move:
 
         validated_legal_attacks = self.clear_out_of_bounds(legal_attacks)
         self.v_l_p = self.clear_out_of_bounds(legal_positions)
-
         self.attack_validation(validated_legal_attacks, picked_piece)
 
     def rules(self, player_clicks):
@@ -265,7 +279,6 @@ class Move:
 
             validated_legal_positions = self.clear_out_of_bounds(list_moves)
             validated_legal_attacks = validated_legal_positions
-
             self.position_validation(validated_legal_positions)
             self.attack_validation(validated_legal_attacks, picked_piece)
             print(self.v_l_a)
@@ -310,7 +323,6 @@ class Move:
 
             validated_legal_positions = self.clear_out_of_bounds(legal_positions)
             validated_legal_attacks = self.clear_out_of_bounds(legal_attacks)
-
             self.position_validation(validated_legal_positions)
             self.attack_validation(validated_legal_attacks, picked_piece)
 
@@ -331,13 +343,20 @@ class Move:
                 clicks = [(row, col)]
                 attacks.append(self.rules(clicks)[1])
                 positions.append(self.rules(clicks)[0])
-        self.fields_u_a = attacks
+
+        attacks_list = [item for sublist in attacks for item in sublist]
+
         for i in range(0, 57, 8):
             attacks_matrix.append([item for item in attacks[i:i+8]])
             positions_matrix.append([item for item in positions[i:i+8]])
 
         position = positions_matrix[player_clicks[0][0]][player_clicks[0][1]]
         attack = attacks_matrix[player_clicks[0][0]][player_clicks[0][1]]
-        return position, attack
+        if (len(attack) == 1) and (self.game_state.board[attack[0][0]][attack[0][1]] == '..'):
+            attack = []
+        else:
+            attack = [att for att in attack if self.game_state.board[att[0]][att[1]] != '..']
+
+        return position, attack, attacks_list
 
 
